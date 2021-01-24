@@ -42,4 +42,33 @@ class NoteController
 
         return new JsonResponse(['status' => 'Note created!'], Response::HTTP_CREATED);
     }
+
+    /**
+     * @Route("/notes", name="get_all_user_notes", methods={"GET"})
+     */
+    public function getAllByUserId(): JsonResponse
+    {
+        //@TODO: receive user id as param. match notes for a specific user
+        $notes = $this->noteRepository->findAllByUserId([]);
+//        $notes = $this->noteRepository->findAllByUserId(['id' => $id]);
+
+        $data = [];
+        foreach ($notes as $note) {
+            $data[] = $this->noteRepository->parseData($note);
+        }
+
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route("/notes/{id}", name="get_one_note", methods={"GET"})
+     */
+//    public function get($id): JsonResponse
+//    {
+//        //@TODO: check note is from the user
+//        $notes = $this->noteRepository->findOneBy(['id' => $id]);
+//
+//
+//        return new JsonResponse($data, Response::HTTP_OK);
+//    }
 }

@@ -37,6 +37,38 @@ class NoteRepository extends ServiceEntityRepository
         $em->flush();
     }
 
+
+
+    public function parseData(Note $data)
+    {
+        return [
+            'id' => $data->getId(),
+            'title' => $data->getTitle(),
+            'note' => $data->getNote(),
+            'createTime' => $data->getCreateTime(),
+            'lastUpdated' => $data->getLastUpdated(),
+        ];
+    }
+
+
+     /**
+      * @return Note[] Returns an array of Note objects
+      */
+    public function findAllByUserId()
+    {
+        //@TODO: get user by param. filter by it
+        return $this->createQueryBuilder('n')
+//            ->andWhere('n.exampleField = :val')
+//            ->setParameter('val', $value)
+            ->orderBy('n.id', 'ASC')
+//            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+
+
     // /**
     //  * @return Note[] Returns an array of Note objects
     //  */
