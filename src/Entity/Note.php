@@ -37,6 +37,12 @@ class Note
      */
     private $lastUpdated;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="notes")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,12 +96,25 @@ class Note
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
     public function toArray()
     {
         return [
             'id' => $this->getId(),
             'title' => $this->getTitle(),
             'note' => $this->getNote(),
+            'user' => $this->getUser(),
             'createTime' => $this->getCreateTime(),
             'lastUpdated' => $this->getLastUpdated()
         ];
