@@ -38,7 +38,7 @@ class NoteRepository extends ServiceEntityRepository
     }
 
 
-    public function updateNote(EntityManagerInterface $em,Note $note): Note
+    public function updateNote(EntityManagerInterface $em, Note $note): Note
     {
         $em->persist($note);
         $em->flush();
@@ -46,6 +46,14 @@ class NoteRepository extends ServiceEntityRepository
         return $note;
     }
 
+
+    public function removeNote(EntityManagerInterface $em, Note $note): Note
+    {
+        $em->remove($note);
+        $em->flush();
+
+        return $note;
+    }
 
     public function parseNote(Note $note)
     {

@@ -80,9 +80,12 @@ class NoteController
      *
      * @return JsonResponse
      */
-    public function update($id, Request $request): JsonResponse
+    public function update(int $id, Request $request): JsonResponse
     {
         $note = $this->noteRepository->findOneBy(['id' => $id]);
+        //@TODO: validate the note exists.
+        //@TODO: Validate the user is the owner of the note
+
         $data = json_decode($request->getContent(), true);
 
         empty($data['title']) ? true : $note->setTitle($data['title']);
@@ -92,5 +95,24 @@ class NoteController
         $updatedNote = $this->noteRepository->updateNote($this->entityManager, $note);
 
         return new JsonResponse($updatedNote->toArray(), Response::HTTP_OK);
+    }
+
+
+    /**
+     * @Route("/notes/{id}", name="delete_note", methods={"DELETE"})
+     * @param int $id
+     *
+     * @return JsonResponse
+     */
+    public function delete(int $id): JsonResponse
+    {
+        $note = $this->noteRepository->findOneBy(['id' => $id]);
+
+        //@TODO: validate the note exists
+        //@TODO: Validate the user is the owner of the note
+
+        $this->noteRepository->removeNote($this->entityManager, $note);
+
+        return new JsonResponse(['status' => 'Note deleted'], Response::HTTP_OK);
     }
 }
