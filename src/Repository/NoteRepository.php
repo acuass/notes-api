@@ -16,14 +16,16 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class NoteRepository extends ServiceEntityRepository
 {
+    private $em;
 
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $em)
     {
         parent::__construct($registry, Note::class);
+        $this->em = $em;
     }
 
 
-    public function saveNote(EntityManagerInterface $em, string $title, string $note)
+    public function saveNote(string $title, string $note)
     {
         $newNote = new Note();
 
@@ -33,24 +35,24 @@ class NoteRepository extends ServiceEntityRepository
             ->setCreateTime()
             ->setLastUpdated();
 
-        $em->persist($newNote);
-        $em->flush();
+        $this->em->persist($newNote);
+        $this->em->flush();
     }
 
 
-    public function updateNote(EntityManagerInterface $em, Note $note): Note
+    public function updateNote(Note $note): Note
     {
-        $em->persist($note);
-        $em->flush();
+        $this->em->persist($note);
+        $this->em->flush();
 
         return $note;
     }
 
 
-    public function removeNote(EntityManagerInterface $em, Note $note): Note
+    public function removeNote(Note $note): Note
     {
-        $em->remove($note);
-        $em->flush();
+        $this->em->remove($note);
+        $this->em->flush();
 
         return $note;
     }

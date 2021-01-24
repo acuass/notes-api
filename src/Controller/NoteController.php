@@ -14,12 +14,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class NoteController
 {
     private $noteRepository;
-    private $entityManager;
 
-    public function __construct(NoteRepository $noteRepository, EntityManagerInterface $entityManager)
+    public function __construct(NoteRepository $noteRepository)
     {
         $this->noteRepository = $noteRepository;
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -38,7 +36,7 @@ class NoteController
             throw new NotFoundHttpException('Expecting mandatory parameters!');
         }
 
-        $this->noteRepository->saveNote($this->entityManager, $title, $note);
+        $this->noteRepository->saveNote($title, $note);
 
         return new JsonResponse(['status' => 'Note created!'], Response::HTTP_CREATED);
     }
@@ -92,7 +90,7 @@ class NoteController
         empty($data['note']) ? true : $note->setNote($data['note']);
         $note->setLastUpdated();
 
-        $updatedNote = $this->noteRepository->updateNote($this->entityManager, $note);
+        $updatedNote = $this->noteRepository->updateNote($note);
 
         return new JsonResponse($updatedNote->toArray(), Response::HTTP_OK);
     }
@@ -111,7 +109,7 @@ class NoteController
         //@TODO: validate the note exists
         //@TODO: Validate the user is the owner of the note
 
-        $this->noteRepository->removeNote($this->entityManager, $note);
+        $this->noteRepository->removeNote($note);
 
         return new JsonResponse(['status' => 'Note deleted'], Response::HTTP_OK);
     }
