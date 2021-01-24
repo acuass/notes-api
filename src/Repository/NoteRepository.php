@@ -38,16 +38,18 @@ class NoteRepository extends ServiceEntityRepository
     }
 
 
-
-    public function parseData(Note $data)
+    public function updateNote(EntityManagerInterface $em,Note $note): Note
     {
-        return [
-            'id' => $data->getId(),
-            'title' => $data->getTitle(),
-            'note' => $data->getNote(),
-            'createTime' => $data->getCreateTime(),
-            'lastUpdated' => $data->getLastUpdated(),
-        ];
+        $em->persist($note);
+        $em->flush();
+
+        return $note;
+    }
+
+
+    public function parseNote(Note $note)
+    {
+        return $note->toArray();
     }
 
 

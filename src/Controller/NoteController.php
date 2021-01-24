@@ -49,12 +49,12 @@ class NoteController
     public function getAllByUserId(): JsonResponse
     {
         //@TODO: receive user id as param. match notes for a specific user
-        $notes = $this->noteRepository->findAllByUserId([]);
+        $notes = $this->noteRepository->findAllByUserId();
 //        $notes = $this->noteRepository->findAllByUserId(['id' => $id]);
 
         $data = [];
         foreach ($notes as $note) {
-            $data[] = $this->noteRepository->parseData($note);
+            $data[] = $this->noteRepository->parseNote($note);
         }
 
         return new JsonResponse($data, Response::HTTP_OK);
@@ -71,4 +71,26 @@ class NoteController
 //
 //        return new JsonResponse($data, Response::HTTP_OK);
 //    }
+
+
+    /**
+     * @Route("/notes/{id}", name="update_note", methods={"PUT"})
+     * @param int $id
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function update($id, Request $request): JsonResponse
+    {
+        $note = $this->noteRepository->findOneBy(['id' => $id]);
+        $data = json_decode($request->getContent(), true);
+
+        empty($data['title']) ? true : $note->setTitle($data['title']);
+        empty($data['note']) ? true : $note->setNote($data['note']);
+        $note->setLastUpdated();
+
+        $updatedNote = $this->noteRepository->updateNote($this->entityManager, $note);
+
+        return new JsonResponse($updatedNote->toArray(), Response::HTTP_OK);
+    }
 }
