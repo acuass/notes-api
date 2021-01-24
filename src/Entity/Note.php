@@ -71,9 +71,9 @@ class Note
         return $this->createTime;
     }
 
-    public function setCreateTime(\DateTimeInterface $createTime): self
+    public function setCreateTime(): self
     {
-        $this->createTime = $createTime;
+        $this->createTime = new \DateTime(date('Y-m-d H:i:s'));;
 
         return $this;
     }
@@ -83,10 +83,21 @@ class Note
         return $this->lastUpdated;
     }
 
-    public function setLastUpdated(\DateTimeInterface $lastUpdated): self
+    public function setLastUpdated(): self
     {
-        $this->lastUpdated = $lastUpdated;
+        $this->lastUpdated = new \DateTime(date('Y-m-d H:i:s'));;
 
         return $this;
+    }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'note' => $this->getNote(),
+            'createTime' => $this->getCreateTime(),
+            'lastUpdated' => $this->getLastUpdated()
+        ];
     }
 }
