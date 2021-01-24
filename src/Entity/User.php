@@ -131,4 +131,14 @@ class User
 
         return $this;
     }
+
+    public function toArray()
+    {
+        return [
+            'id' => $this->getId(),
+            'email' => $this->getEmail(),
+            'createTime' => $this->getCreateTime(),
+            'lastUpdated' => $this->getLastUpdateTime()
+        ];
+    }
 }

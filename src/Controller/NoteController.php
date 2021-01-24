@@ -4,7 +4,7 @@ namespace App\Controller;
 
 
 use App\Repository\NoteRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,10 +14,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class NoteController
 {
     private $noteRepository;
+    private $userRepository;
 
-    public function __construct(NoteRepository $noteRepository)
+    public function __construct(NoteRepository $noteRepository, UserRepository $userRepository)
     {
         $this->noteRepository = $noteRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -31,12 +33,16 @@ class NoteController
 
         $title = $data['title'];
         $note = $data['note'];
+        $user = $data['user'];
 
-        if (empty($title) || empty($note)) {
+        //@TODO: decide if search of user by id or email
+        $user = $this->userRepository->findOneBy(['id' => $user]);
+
+        if (empty($title) || empty($note) || empty($user)) {
             throw new NotFoundHttpException('Expecting mandatory parameters!');
         }
 
-        $this->noteRepository->saveNote($title, $note);
+        $this->noteRepository->saveNote($title, $note, $user);
 
         return new JsonResponse(['status' => 'Note created!'], Response::HTTP_CREATED);
     }

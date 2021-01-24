@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Note;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,13 +26,14 @@ class NoteRepository extends ServiceEntityRepository
     }
 
 
-    public function saveNote(string $title, string $note)
+    public function saveNote(string $title, string $note, User $user)
     {
         $newNote = new Note();
 
         $newNote
             ->setTitle($title)
             ->setNote($note)
+            ->setUser($user)
             ->setCreateTime()
             ->setLastUpdated();
 
