@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Repository\NoteRepository;
 use App\Repository\UserRepository;
+use App\Service\UserHelper;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,11 +16,13 @@ class NoteController
 {
     private $noteRepository;
     private $userRepository;
+    private $userHelper;
 
-    public function __construct(NoteRepository $noteRepository, UserRepository $userRepository)
+    public function __construct(NoteRepository $noteRepository, UserRepository $userRepository, UserHelper $userHelper)
     {
         $this->noteRepository = $noteRepository;
         $this->userRepository = $userRepository;
+        $this->userHelper = $userHelper;
     }
 
     /**
@@ -89,7 +92,7 @@ class NoteController
         }
 
         $user = $this->isUserAuthorizedByBasicHttp($request);
-        if (empty($user) || $note->getUser()->getEmail() != $user->getEmail()) {
+        if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -114,7 +117,7 @@ class NoteController
         }
 
         $user = $this->isUserAuthorizedByBasicHttp($request);
-        if (empty($user) || $note->getUser()->getEmail() != $user->getEmail()) {
+        if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -146,7 +149,7 @@ class NoteController
         }
 
         $user = $this->isUserAuthorizedByBasicHttp($request);
-        if (empty($user) || $note->getUser()->getEmail() != $user->getEmail()) {
+        if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
 
@@ -162,7 +165,8 @@ class NoteController
      *
      * @return \App\Entity\User|null
      */
-    private function isUserAuthorizedByBasicHttp(Request $request) {
+    private function isUserAuthorizedByBasicHttp(Request $request)
+    {
         //@TODO: different types of authorization? Explode, and with a factory get the correct manager based on the type (basic, bearer, etc...)
         $auth = $request->headers->get("Authorization");
         if (empty($auth)) return null;
@@ -173,7 +177,6 @@ class NoteController
 
         $user = $this->userRepository->findOneBy(['email' => $auth[0]]);
 
-        //@TODO:password should be encoded in DB.
-        return !empty($user) && $user->getPassword() == $auth[1] ? $user : null;
+        return !empty($user) && $this->userHelper->checkUserPassword($user,$auth[1]) ? $user : null;
     }
 }
