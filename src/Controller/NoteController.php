@@ -45,8 +45,7 @@ class NoteController
 
 
         if (empty($title) || empty($note)) {
-            //@TODO: return bad request
-            throw new NotFoundHttpException('Expecting mandatory parameters!');
+            return new JsonResponse(['status' => 'Expecting mandatory parameters!'], Response::HTTP_BAD_REQUEST);
         }
 
         $this->noteRepository->saveNote($title, $note, $user);
