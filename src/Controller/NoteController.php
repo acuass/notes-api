@@ -76,15 +76,26 @@ class NoteController
 
     /**
      * @Route("/notes/{id}", name="get_one_note", methods={"GET"})
+     * @param int $id
+     * @param Request $request
+     *
+     * @return JsonResponse
      */
-//    public function get($id): JsonResponse
-//    {
-//        //@TODO: check note is from the user
-//        $notes = $this->noteRepository->findOneBy(['id' => $id]);
-//
-//
-//        return new JsonResponse($data, Response::HTTP_OK);
-//    }
+    public function getOne($id, Request $request): JsonResponse
+    {
+        $note = $this->noteRepository->findOneBy(['id' => $id]);
+        if (empty($note)) {
+            return new JsonResponse(['status' => 'The note does not exist'], Response::HTTP_NOT_FOUND);
+        }
+
+        $user = $this->isUserAuthorizedByBasicHttp($request);
+        if (empty($user) || $note->getUser()->getEmail() != $user->getEmail()) {
+            return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
+        }
+
+
+        return new JsonResponse($note->toArray(), Response::HTTP_OK);
+    }
 
 
     /**
