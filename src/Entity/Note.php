@@ -114,7 +114,6 @@ class Note
             'id' => $this->getId(),
             'title' => $this->getTitle(),
             'note' => $this->getNote(),
-            'user' => $this->getUser()->toArray(),
             'createTime' => $this->getCreateTime(),
             'lastUpdated' => $this->getLastUpdated()
         ];
