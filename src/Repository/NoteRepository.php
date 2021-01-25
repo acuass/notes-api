@@ -66,49 +66,19 @@ class NoteRepository extends ServiceEntityRepository
 
 
      /**
-      * @return Note[] Returns an array of Note objects
+      * Returns an array of Note objects
+      * @param int $id
+      *
+      * @return Note[]
       */
-    public function findAllByUserId()
+    public function findAllByUserId(int $id) : array
     {
-        //@TODO: get user by param. filter by it
         return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
+            ->andWhere('n.user = :val')
+            ->setParameter('val', $id)
             ->orderBy('n.id', 'ASC')
-//            ->setMaxResults(10)
             ->getQuery()
             ->getResult()
         ;
     }
-
-
-
-    // /**
-    //  * @return Note[] Returns an array of Note objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('n')
-            ->andWhere('n.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('n.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Note
-    {
-        return $this->createQueryBuilder('n')
-            ->andWhere('n.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
