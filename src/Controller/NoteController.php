@@ -38,7 +38,6 @@ class NoteController
         $note = $data['note'];
 
         $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
-        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -62,7 +61,6 @@ class NoteController
     public function getAllByUserId(Request $request): JsonResponse
     {
         $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
-        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -92,7 +90,6 @@ class NoteController
         }
 
         $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
-        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -118,7 +115,6 @@ class NoteController
         }
 
         $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
-        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -151,7 +147,6 @@ class NoteController
         }
 
         $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
-        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
