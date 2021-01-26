@@ -79,7 +79,7 @@ class Note
 
     public function setCreateTime(): self
     {
-        $this->createTime = new \DateTime(date('Y-m-d H:i:s'));;
+        $this->createTime = new \DateTime(date('Y-m-d H:i:s'));
 
         return $this;
     }
@@ -91,7 +91,7 @@ class Note
 
     public function setLastUpdated(): self
     {
-        $this->lastUpdated = new \DateTime(date('Y-m-d H:i:s'));;
+        $this->lastUpdated = new \DateTime(date('Y-m-d H:i:s'));
 
         return $this;
     }
