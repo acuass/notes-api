@@ -37,7 +37,8 @@ class NoteController
         $title = $data['title'];
         $note = $data['note'];
 
-        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
+        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -60,7 +61,8 @@ class NoteController
      */
     public function getAllByUserId(Request $request): JsonResponse
     {
-        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
+        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -89,7 +91,8 @@ class NoteController
             return new JsonResponse(['status' => 'The note does not exist'], Response::HTTP_NOT_FOUND);
         }
 
-        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
+        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -114,12 +117,13 @@ class NoteController
             return new JsonResponse(['status' => 'The note does not exist'], Response::HTTP_NOT_FOUND);
         }
 
-        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
+        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
 
-        //@TODO: can a note change the ownership to another user? Assume no for now
+        //@TODO: can the ownership of a note change to another user? Assume no for now
         $data = json_decode($request->getContent(), true);
 
         empty($data['title']) ? true : $note->setTitle($data['title']);
@@ -146,7 +150,8 @@ class NoteController
             return new JsonResponse(['status' => 'The note does not exist'], Response::HTTP_NOT_FOUND);
         }
 
-        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->checkUserAuthorization($request->headers->get("Authorization"));
+        //$user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }

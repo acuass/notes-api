@@ -6,16 +6,19 @@ namespace App\Service;
 use App\Entity\User;
 use App\Entity\Note;
 use App\Repository\UserRepository;
+use App\Service\Authentication\AuthenticationFactory;
 use Symfony\Component\HttpFoundation\Request;
 
 class UserHelper
 {
 
     private $userRepository;
+    private $authenticationFactory;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, AuthenticationFactory $authenticationFactory)
     {
         $this->userRepository = $userRepository;
+        $this->authenticationFactory = $authenticationFactory;
     }
 
     /**
@@ -50,7 +53,6 @@ class UserHelper
      */
     public function isUserAuthorizedByBasicHttp(Request $request)
     {
-        //@TODO: different types of authorization? Explode, and with a factory get the correct manager based on the type (basic, bearer, etc...)
         $auth = $request->headers->get("Authorization");
         if (empty($auth)) return null;
 
@@ -62,4 +64,17 @@ class UserHelper
 
         return !empty($user) && $this->checkUserPassword($user,$password) ? $user : null;
     }
+
+    //@TODO: test it to see if it works
+    public function checkUserAuthorization(string $auth)
+    {
+        if (empty($auth)) return null;
+
+        list($authType, $credentials) = explode(" ", $auth);
+
+        $authenticator = $this->authenticationFactory->create($authType);
+        return $authenticator->validate($credentials);
+
+    }
+
 }
