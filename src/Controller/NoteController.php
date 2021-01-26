@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class NoteController
 {
@@ -38,7 +37,7 @@ class NoteController
         $title = $data['title'];
         $note = $data['note'];
 
-        $user = $this->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -61,7 +60,7 @@ class NoteController
      */
     public function getAllByUserId(Request $request): JsonResponse
     {
-        $user = $this->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -90,7 +89,7 @@ class NoteController
             return new JsonResponse(['status' => 'The note does not exist'], Response::HTTP_NOT_FOUND);
         }
 
-        $user = $this->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -115,7 +114,7 @@ class NoteController
             return new JsonResponse(['status' => 'The note does not exist'], Response::HTTP_NOT_FOUND);
         }
 
-        $user = $this->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -147,7 +146,7 @@ class NoteController
             return new JsonResponse(['status' => 'The note does not exist'], Response::HTTP_NOT_FOUND);
         }
 
-        $user = $this->isUserAuthorizedByBasicHttp($request);
+        $user = $this->userHelper->isUserAuthorizedByBasicHttp($request);
         if (empty($user) || !$this->userHelper->isUserOwnerOfNote($user,$note)) {
             return new JsonResponse(['status' => 'You are not authorized!'], Response::HTTP_UNAUTHORIZED);
         }
@@ -155,27 +154,5 @@ class NoteController
         $this->noteRepository->removeNote($note);
 
         return new JsonResponse(['status' => 'Note deleted'], Response::HTTP_NO_CONTENT);
-    }
-
-
-    /**
-     * Returns the user if the access is granted. Null otherwise
-     * @param Request $request
-     *
-     * @return \App\Entity\User|null
-     */
-    private function isUserAuthorizedByBasicHttp(Request $request)
-    {
-        //@TODO: different types of authorization? Explode, and with a factory get the correct manager based on the type (basic, bearer, etc...)
-        $auth = $request->headers->get("Authorization");
-        if (empty($auth)) return null;
-
-        $auth = explode(" ", $auth);
-        $auth = base64_decode($auth[1]);
-        $auth = explode(":", $auth);
-
-        $user = $this->userRepository->findOneBy(['email' => $auth[0]]);
-
-        return !empty($user) && $this->userHelper->checkUserPassword($user,$auth[1]) ? $user : null;
     }
 }
