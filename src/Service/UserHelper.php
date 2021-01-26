@@ -39,8 +39,7 @@ class UserHelper
      */
     public function checkUserPassword(User $user, string $password) : bool
     {
-        //@TODO:password should be encoded in DB.
-        return $user->getPassword() === $password;
+        return password_verify($password, $user->getPassword());
     }
 
     /**

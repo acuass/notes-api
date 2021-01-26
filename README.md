@@ -27,9 +27,9 @@ symfony console doctrine:fixtures:load
 
 The users created with fixtures are:
 
-jt@jt.com // test
+jt@jt.com // test1
 
-j@j.com // test
+j@j.com // test2
 
 
 ## Usage
